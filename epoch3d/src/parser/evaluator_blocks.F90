@@ -18,6 +18,7 @@ MODULE evaluator_blocks
   USE custom_parser
   USE stack
   USE strings
+  USE numerics
 
   IMPLICIT NONE
 
@@ -1071,6 +1072,21 @@ CONTAINS
       CALL push_on_eval(LOG(values(1))/LOG(values(2)))
       RETURN
     END IF
+
+
+    ! Added 4-24-2022 by B. Unzicker
+    IF (opcode == c_func_factorial) THEN
+      CALL get_values(1, values)
+      CALL push_on_eval(factorial(values(1)))
+      RETURN
+    END IF
+
+    IF (opcode == c_func_gen_lg_poly) THEN
+      CALL get_values(3, values)
+      CALL push_on_eval(gen_lg_poly(values(1), values(2), values(3)))
+      RETURN
+    END IF
+
 
     err = c_err_unknown_element
 

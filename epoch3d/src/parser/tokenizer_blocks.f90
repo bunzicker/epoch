@@ -586,6 +586,13 @@ CONTAINS
     ELSE IF (str_cmp(name, 'critical')) THEN
       as_function = c_func_crit
 
+    ! Added 4-24-2022 by B. Unzicker
+    ELSE IF (str_cmp(name, 'factorial')) THEN
+      as_function = c_func_factorial
+
+    ELSE IF (str_cmp(name, 'gen_lg_poly')) THEN
+      as_function = c_func_gen_lg_poly
+
     END IF
 
     DO i = 1, n_new_func

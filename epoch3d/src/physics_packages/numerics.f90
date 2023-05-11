@@ -791,4 +791,29 @@ CONTAINS
 !---------- Last line of rkbesl ----------
   END FUNCTION rkbesl
 
+
+! Added 4-24-2022 by B. Unzicker
+
+  REAL(num) FUNCTION gen_lg_poly(p, l, r)
+  
+! Calculate the Generalized Laguerre-Gauss polynomial of order (p, l) for
+! argument x, L^l_p(x).
+
+    REAL(num), INTENT(IN) :: p, l, r
+    REAL(num) :: numerator, denominator, mth_term
+    INTEGER :: m
+
+    gen_lg_poly = 0.0_num 
+    
+    DO m = 0, INT(p)      
+      numerator = (-1.0_num)**m * factorial(p + l)
+      denominator = factorial(p - REAL(m, num)) * factorial(l + REAL(m, num)) * factorial(REAL(m, num))
+
+      mth_term = numerator/denominator * r**m
+      gen_lg_poly = gen_lg_poly + mth_term
+    END DO
+
+  END FUNCTION gen_lg_poly
+
+
 END MODULE numerics
