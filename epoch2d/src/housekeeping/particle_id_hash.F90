@@ -636,6 +636,8 @@ CONTAINS
   !> Get the hashmap (bitmask of which hashes the specified ID is contained in)
 
   SUBROUTINE pidr_add_with_map(this, part, hashmap)
+  ! 2023/03/20  - B. Unzicker applied the fix described in https://github.com/Warwick-Plasma/epoch/issues/361.
+  ! This enables the use of multiple subsets containing the same particles.
 
     CLASS(particle_id_list_registry), INTENT(INOUT) :: this
     TYPE(particle), POINTER, INTENT(IN) :: part
@@ -657,7 +659,7 @@ CONTAINS
     shifthash = hashmap
     DO ihash = 1, sz
       IF (IAND(shifthash, 1_i8) /= 0_i8) &
-          CALL pid_hash_add_hkind(this%list(ihash)%contents, new_id)
+          CALL pid_hash_add_hkind(this%list(sz + 1 - ihash)%contents, new_id)		! ihash -> sz + 1 - ihash
       shifthash = ISHFT(shifthash, -1_i8)
     END DO
 
