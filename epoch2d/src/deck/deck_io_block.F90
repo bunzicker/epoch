@@ -737,6 +737,18 @@ CONTAINS
     ELSE IF (str_cmp(element, 'coulomb_logarithm')) THEN
       elementselected = c_dump_cou_log
 
+#ifdef CALC_RADIATION
+    ELSE IF (str_cmp(element, 'detector_grid')) THEN
+      elementselected = c_dump_virtual_det_grid
+
+    ELSE IF (str_cmp(element, 'detector_times')) THEN
+      elementselected = c_dump_virtual_det_times
+
+    ELSE IF (str_cmp(element, 'field_at_detector')) THEN
+      elementselected = c_dump_field_at_detector
+#endif
+
+
     ELSE
       got_element = .FALSE.
 

@@ -20,6 +20,9 @@ MODULE particles
 #ifdef PREFETCH
   USE prefetch
 #endif
+#ifdef CALC_RADIATION
+  USE calc_radiation
+#endif
 
   IMPLICIT NONE
 
@@ -56,6 +59,14 @@ CONTAINS
     REAL(num) :: part_q, part_mc, ipart_mc, part_weight, part_m
 #ifdef HC_PUSH
     REAL(num) :: beta_x, beta_y, beta_z, beta2, beta_dot_u, alpha, sigma
+#endif
+
+    ! Variables related to calc_radiation
+#ifdef CALC_RADIATION
+    INTEGER :: ix_det, iy_det, iz_det
+    REAL(num) :: prefac, R_mag, R_mag_prev, t_det, t_det_prev
+    REAL(num), DIMENSION(3) :: pos, pos_prev, beta, beta_prev, beta_dot
+    REAL(num), DIMENSION(3) :: pos_det, field_at_part
 #endif
 
     ! Used for particle probes (to see of probe conditions are satisfied)
@@ -297,6 +308,13 @@ CONTAINS
         gamma_rel = SQRT(part_ux**2 + part_uy**2 + part_uz**2 + 1.0_num)
         root = dtco2 / gamma_rel
 
+#ifdef CALC_RADIATION
+        ! Store current position and velocity for later
+        pos_prev = (/part_x, part_y, 0.0_num/)
+        beta_prev = (/part_ux, part_uy, part_uz/) * root / c
+#endif
+
+
         ! Move particles to half timestep position to first order
         part_x = part_x + part_ux * root
         part_y = part_y + part_uy * root
@@ -440,6 +458,47 @@ CONTAINS
         ! Move particles to end of time step at 2nd order accuracy
         part_x = part_x + delta_x
         part_y = part_y + delta_y
+
+#ifdef CALC_RADIATION
+        ! Calculate radiation at virtual detector
+        pos = (/part_x, part_y, 0.0_num/)
+        beta = (/part_ux, part_uy, part_uz/) * c * igamma
+        beta_dot = (beta - beta_prev) / dt
+
+        IF (time >= calc_radiation_start_time .AND. & 
+                    ispecies == rad_species_int) THEN
+          IF (gamma_rel >= calc_rad_gamma_min) THEN
+            DO ix_det = 1, nx_det
+              pos_det(1) = x_det_array(ix_det)
+              
+              DO iy_det = 1, ny_det
+                pos_det(2) = y_det_array(iy_det)
+
+                DO iz_det = 1, nz_det
+                  pos_det(3) = z_det_array(iz_det)
+                  
+                  R_mag = SQRT( (pos(1) - pos_det(1))**2 +  & 
+                                (pos(2) - pos_det(2))**2 +  & 
+                                (pos(3) - pos_det(3))**2 )
+                  R_mag_prev = SQRT( (pos_prev(1) - pos_det(1))**2 +  & 
+                                    (pos_prev(2) - pos_det(2))**2 +  & 
+                                    (pos_prev(3) - pos_det(3))**2 )
+
+                  t_det = R_mag/c + time
+                  t_det_prev = R_mag_prev/c + time - dt
+
+                  IF (t_det_prev > t_det_min .AND. t_det < t_det_max) THEN
+                    !field_at_part = field(pos, pos_det, beta, beta_dot)
+                    field_at_part = (/1.0_num, 2.0_num, 3.0_num/)
+                    CALL interp_field(t_det, t_det_prev, field_at_part)
+                  END IF
+
+                END DO
+              END DO
+            END DO
+          END IF
+        END IF
+#endif
 
         ! particle has now finished move to end of timestep, so copy back
         ! into particle array

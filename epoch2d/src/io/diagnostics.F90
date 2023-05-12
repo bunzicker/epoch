@@ -931,6 +931,41 @@ CONTAINS
             'Absorption/Fraction of Laser Energy Absorbed (%)', laser_absorbed)
       END IF
 
+      ! Dump information related to calc_radiation
+      IF (IAND(iomask(c_dump_virtual_det_grid), code) /= 0) THEN
+        CALL sdf_write_srl_plain_mesh(sdf_handle, 'detector_grid', &
+          'Virtual_Detector_Grid', &
+          x_det_array, y_det_array, z_det_array, convert)
+      END IF
+
+      IF (IAND(iomask(c_dump_virtual_det_times), code) /= 0) THEN
+        CALL sdf_write_srl_plain_mesh(sdf_handle, 'detector_times', &
+          'Virtual_Detector_Times', det_times, convert)
+      END IF
+
+      IF (IAND(iomask(c_dump_field_at_detector), code) /= 0) THEN
+        ! Dump field_at_detector    
+
+        IF (rank == 0) THEN
+          OPEN(24, file = 'data.txt', STATUS = 'OLD')
+          WRITE(24, *) 'Before MPI_ALLREDUCE'
+          WRITE(24, *) field_at_detector
+        END IF
+        
+        CALL MPI_ALLREDUCE(MPI_IN_PLACE, field_at_detector, nt_det*3, &
+                  mpireal, MPI_SUM, comm, errcode)
+
+        IF (rank ==0) THEN
+          WRITE(24, *) 'After MPI_ALLREDUCE'
+          WRITE(24, *) field_at_detector
+          CLOSE(24)
+        END IF
+        
+        CALL sdf_write_array(sdf_handle, 'field_at_detector', &
+           'Field_at_Detector', field_at_detector, (/nt_det, 3/), (/1, 1/)) 
+      END IF
+
+
       ! close the file
       CALL sdf_close(sdf_handle)
 

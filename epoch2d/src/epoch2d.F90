@@ -57,6 +57,10 @@ PROGRAM pic
 #ifdef BREMSSTRAHLUNG
   USE bremsstrahlung
 #endif
+#ifdef CALC_RADIATION
+  USE calc_radiation
+#endif
+
 
   IMPLICIT NONE
 
