@@ -947,23 +947,12 @@ CONTAINS
       END IF
 
       IF (IAND(iomask(c_dump_field_at_detector), code) /= 0) THEN
-        ! Dump field_at_detector    
-
-        IF (rank == 0) THEN
-          OPEN(24, file = 'data.txt', STATUS = 'OLD')
-          WRITE(24, *) 'Before MPI_ALLREDUCE'
-          WRITE(24, *) field_at_detector
-        END IF
-        
+        ! Dump field_at_detector            
         ALLOCATE(field_at_detector_output(nt_det, 3))
+        field_at_detector_output(:, :) = 0.0_num
+
         CALL MPI_ALLREDUCE(field_at_detector, field_at_detector_output, & 
                 nt_det*3, mpireal, MPI_SUM, comm, errcode)
-
-        IF (rank ==0) THEN
-          WRITE(24, *) 'After MPI_ALLREDUCE'
-          WRITE(24, *) field_at_detector_output
-          CLOSE(24)
-        END IF
 
         CALL sdf_write_array(sdf_handle, 'field_at_detector', &
            'Field_at_Detector', field_at_detector_output, & 
