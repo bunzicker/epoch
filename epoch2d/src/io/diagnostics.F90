@@ -232,6 +232,9 @@ CONTAINS
         (/'x_max', 'y_max', 'z_max', 'x_min', 'y_min', 'z_min'/)
     INTEGER, DIMENSION(6) :: fluxdir = &
         (/c_dir_x, c_dir_y, c_dir_z, -c_dir_x, -c_dir_y, -c_dir_z/)
+    REAL(num), DIMENSION(:, :), ALLOCATABLE :: field_at_detector_output
+
+
 
     ! Clean-up any cached RNG state
     CALL random_flush_cache
@@ -952,17 +955,20 @@ CONTAINS
           WRITE(24, *) field_at_detector
         END IF
         
-        CALL MPI_ALLREDUCE(MPI_IN_PLACE, field_at_detector, nt_det*3, &
-                  mpireal, MPI_SUM, comm, errcode)
+        ALLOCATE(field_at_detector_output(nt_det, 3))
+        CALL MPI_ALLREDUCE(field_at_detector, field_at_detector_output, & 
+                nt_det*3, mpireal, MPI_SUM, comm, errcode)
 
         IF (rank ==0) THEN
           WRITE(24, *) 'After MPI_ALLREDUCE'
-          WRITE(24, *) field_at_detector
+          WRITE(24, *) field_at_detector_output
           CLOSE(24)
         END IF
-        
+
         CALL sdf_write_array(sdf_handle, 'field_at_detector', &
-           'Field_at_Detector', field_at_detector, (/nt_det, 3/), (/1, 1/)) 
+           'Field_at_Detector', field_at_detector_output, & 
+           (/nt_det, 3/), (/1, 1/))   
+        DEALLOCATE(field_at_detector_output)      
       END IF
 
 
