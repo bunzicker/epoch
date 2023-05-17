@@ -124,7 +124,7 @@ MODULE calc_radiation
     !     REAL(num) :: scale_fac, t_temp
         
     !     n_slot = FLOOR((t - t_det_min)/dt_det)
-    !     field_at_detector(n_slot, :) = field * n_slot
+    !     field_at_detector(n_slot, :) = field
     ! END SUBROUTINE interp_field
 
     ! FUNCTION interp_field(t, t_prev, field, nt_det) RESULT(output)
