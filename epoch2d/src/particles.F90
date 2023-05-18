@@ -490,7 +490,6 @@ CONTAINS
 
                   IF (t_det_prev > t_det_min .AND. t_det < t_det_max) THEN
                     field_at_part = field(pos, pos_det, beta, beta_dot)
-                    ! field_at_part = (/time, beta_prev(1), beta(1)/)
                     CALL interp_field(t_det, t_det_prev, field_at_part)
                   END IF
 
