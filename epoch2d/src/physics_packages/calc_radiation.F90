@@ -116,48 +116,6 @@ MODULE calc_radiation
         field_at_detector(n_slot + 1, :) = &
                             field_at_detector(n_slot + 1, :) + scale_fac*field
     END SUBROUTINE interp_field        
-
-    ! SUBROUTINE interp_field(t, t_prev, field)
-    !     REAL(num), INTENT(IN) :: t, t_prev
-    !     REAL(num), DIMENSION(3), INTENT(IN) :: field
-    !     INTEGER :: n_slot, n_slot_prev, n_iter
-    !     REAL(num) :: scale_fac, t_temp
-        
-    !     n_slot = FLOOR((t - t_det_min)/dt_det)
-    !     field_at_detector(n_slot, :) = field
-    ! END SUBROUTINE interp_field
-
-    ! FUNCTION interp_field(t, t_prev, field, nt_det) RESULT(output)
-    !     INTEGER, INTENT(IN) :: nt_det
-    !     REAL(KIND=num), INTENT(IN) :: t, t_prev
-    !     REAL(KIND=num), DIMENSION(3), INTENT(IN) :: field
-    !     INTEGER :: n_slot, n_slot_prev, n_iter
-    !     REAL(KIND=num) :: scale_fac, t_temp
-    !     REAL(KIND=num), DIMENSION(:, :), ALLOCATABLE :: output
-
-    !     ! Initialize to 0
-    !     ALLOCATE(output(nt_det, 3))
-    !     output = 0.0
-                    
-    !     ! Define iterator variables
-    !     n_slot = FLOOR((t - t_det_min)/dt_det)
-    !     n_slot_prev = FLOOR((t_prev - t_det_min)/dt_det)
-    !     n_iter = n_slot_prev
-    !     t_temp = t_prev
-
-    !     ! Interpolate field onto t_det_array
-    !     DO WHILE (n_iter < n_slot)
-    !         scale_fac = (det_times(n_iter + 2) - t_temp)/dt_det
-    !         output(n_iter + 1, :) = scale_fac*field
-    !         n_iter = n_iter + 1
-    !         t_temp = det_times(n_iter + 1)
-    !     END DO
-
-    !     ! Use a different scale to prevent double counting
-    !     scale_fac = (t - det_times(n_slot + 1))/dt_det
-    !     output(n_slot + 1, :) = scale_fac*field
-
-    ! END FUNCTION interp_field
         
 
     SUBROUTINE close_calc_radiation
