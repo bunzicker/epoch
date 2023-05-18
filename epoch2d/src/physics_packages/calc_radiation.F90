@@ -67,7 +67,7 @@ MODULE calc_radiation
             END IF
         END DO
     END SUBROUTINE get_radiation_species_int
-
+            
     FUNCTION field(r_part, r_det, beta, beta_dot)
     ! Compute the electric field at r_det due to a particle at r_part.
     
@@ -115,7 +115,7 @@ MODULE calc_radiation
         scale_fac = (t - det_times(n_slot + 1))/dt_det
         field_at_detector(n_slot + 1, :) = &
                             field_at_detector(n_slot + 1, :) + scale_fac*field
-    END SUBROUTINE interp_field
+    END SUBROUTINE interp_field        
 
     ! SUBROUTINE interp_field(t, t_prev, field)
     !     REAL(num), INTENT(IN) :: t, t_prev

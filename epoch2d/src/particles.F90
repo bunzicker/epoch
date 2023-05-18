@@ -311,7 +311,7 @@ CONTAINS
 #ifdef CALC_RADIATION
         ! Store current position and velocity for later
         pos_prev = (/current%part_pos(1), current%part_pos(2), 0.0_num/)
-        beta_prev = (/part_ux, part_uy, part_uz/) * c / gamma_rel
+        beta_prev = (/part_ux, part_uy, part_uz/) / gamma_rel
 #endif
 
 
@@ -463,7 +463,7 @@ CONTAINS
         ! Calculate radiation at virtual detector
         pos = (/part_x + x_grid_min_local, &
             	part_y + y_grid_min_local, 0.0_num/)
-        beta = (/part_ux, part_uy, part_uz/) * c * igamma
+        beta = (/part_ux, part_uy, part_uz/) * igamma
         beta_dot = (beta - beta_prev) / dt
 
         IF (time >= calc_radiation_start_time .AND. & 
