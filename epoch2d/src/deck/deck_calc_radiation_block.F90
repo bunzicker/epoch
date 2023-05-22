@@ -6,7 +6,6 @@
 
 MODULE deck_calc_radiation_block
 
-    USE shared_data
     USE strings_advanced
     USE utilities
     USE calc_radiation
