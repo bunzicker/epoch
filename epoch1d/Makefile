@@ -270,6 +270,10 @@ DEFINES := $(DEFINE)
 # Sets warning messages to be errors
 #DEFINES += $(D)DECK_DEBUG
 
+# Calculate the radiation emitted from particles in the simulation
+DEFINES += $(D)CALC_RADIATION
+
+
 # If you are having trouble compiling the encoded_source module or
 # don't want embedded source code in restart dumps, uncomment the
 # following line.
@@ -308,10 +312,10 @@ FC_INFO := $(shell ${FC} --version 2>/dev/null \
 
 
 SRCFILES = background_collisions.F90 balance.F90 bethe_heitler.F90 \
-  boundary.F90 bremsstrahlung.F90 calc_df.F90 collisions.F90 \
+  boundary.F90 bremsstrahlung.F90 calc_df.F90 calc_radiation.F90 collisions.F90 \
 	collision_ionise.F90 constants.F90 current_smooth.F90 custom_deck.f90 \
 	custom_laser.f90 custom_parser.f90 deck.F90 deck_boundaries_block.f90 \
-	deck_bremsstrahlung_block.F90 deck_collision_block.F90 \
+	deck_bremsstrahlung_block.F90 deck_calc_radiation_block.F90 deck_collision_block.F90 \
 	deck_constant_block.f90 deck_control_block.F90 deck_dist_fn_block.f90 \
 	deck_fields_block.f90 deck_injector_block.F90 deck_io_block.F90 \
 	deck_io_global_block.F90 deck_laser_block.f90 deck_part_from_file_block.F90 \
@@ -456,6 +460,7 @@ boundary.o: boundary.F90 injectors.o laser.o mpi_subtype_control.o \
 bremsstrahlung.o: bremsstrahlung.F90 bethe_heitler.o calc_df.o particles.o \
 	partlist.o setup.o
 calc_df.o: calc_df.F90 boundary.o
+calc_radiation.o : calc_radiation.F90 shared_data.o
 collisions.o: collisions.F90 calc_df.o prefetch.o
 collision_ionise.o: collision_ionise.F90 calc_df.o collisions.o prefetch.o
 constants.o: constants.F90 $(SDFMOD)
@@ -464,8 +469,8 @@ custom_deck.o: custom_deck.f90 constants.o
 custom_laser.o: custom_laser.f90 shared_data.o
 custom_parser.o: custom_parser.f90 shared_data.o stack.o tokenizer_blocks.o
 deck.o: deck.F90 bremsstrahlung.o custom_deck.o deck_boundaries_block.o \
-  deck_bremsstrahlung_block.o deck_collision_block.o deck_constant_block.o \
-  deck_control_block.o deck_dist_fn_block.o deck_fields_block.o \
+  deck_bremsstrahlung_block.o deck_calc_radiation_block.o deck_collision_block.o \
+  deck_constant_block.o  deck_control_block.o deck_dist_fn_block.o deck_fields_block.o \
   deck_injector_block.o deck_io_block.o deck_io_global_block.o \
   deck_laser_block.o deck_part_from_file_block.o deck_particle_probe_block.o \
   deck_qed_block.o deck_species_block.o deck_stencil_block.o \
@@ -475,6 +480,7 @@ deck_boundaries_block.o: deck_boundaries_block.f90 strings_advanced.o \
   utilities.o
 deck_bremsstrahlung_block.o: deck_bremsstrahlung_block.F90 strings_advanced.o \
   utilities.o
+deck_calc_radiation_block.o: strings_advanced.o utilities.o calc_radiation.o
 deck_collision_block.o: deck_collision_block.F90 collisions.o strings_advanced.o
 deck_constant_block.o: deck_constant_block.f90 evaluate.o shunt.o
 deck_control_block.o: deck_control_block.F90 fields.o strings_advanced.o \
@@ -504,7 +510,7 @@ diagnostics.o: diagnostics.F90 calc_df.o constants.o deck.o deck_io_block.o \
   strings.o timer.o version_data.o window.o $(SDFMOD) $(ENCODED_SOURCE)
 dist_fn.o: dist_fn.F90 mpi_subtype_control.o particles.o $(SDFMOD)
 epoch1d.o: epoch1d.F90 background_collisions.o balance.o bremsstrahlung.o \
-	calc_df.o collisions.o collision_ionise.o current_smooth.o deck.o \
+	calc_df.o calc_radiation.o collisions.o collision_ionise.o current_smooth.o deck.o \
 	diagnostics.o fields.o finish.o helper.o ic_module.o injectors.o ionise.o \
 	mpi_routines.o particle_migration.o particles.o photons.o setup.o \
 	split_particle.o welcome.o window.o
@@ -534,7 +540,7 @@ particle_migration.o: particle_migration.F90 calc_df.o partlist.o prefetch.o
 particle_pointer_advance.o: particle_pointer_advance.f90 shared_data.o
 particle_temperature.o: particle_temperature.F90 constants.o evaluate.o \
   random_generator.o
-particles.o: particles.F90 boundary.o partlist.o prefetch.o
+particles.o: particles.F90 boundary.o calc_radiation.o partlist.o prefetch.o
 partlist.o: partlist.F90 particle_id_hash.o random_generator.o shared_data.o
 photons.o: photons.F90 partlist.o
 prefetch.o: prefetch.F90 shared_data.o

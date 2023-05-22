@@ -640,6 +640,32 @@ MODULE shared_data
 #endif
   LOGICAL :: use_bremsstrahlung = .FALSE.
 
+#ifdef CALC_RADIATION
+  !----------------------------------------------------------------------------
+  ! Calculate Radiation - Written by B. Unzicker
+  !----------------------------------------------------------------------------
+
+  ! Deck variables
+  CHARACTER(LEN=string_length) :: radiation_species
+  REAL(num) :: calc_radiation_start_time
+  CHARACTER(LEN=string_length) :: detector_type
+  INTEGER :: nx_det, ny_det, nz_det
+  REAL(num) :: x_det_min, x_det_max, y_det_min, y_det_max, z_det_min, z_det_max
+  REAL(num) :: detector_pos
+  REAL(num) :: t_det_min, t_det_max
+  REAL(num) :: dt_det
+  REAL(num) :: calc_rad_gamma_min, calc_rad_E_min
+
+  ! Generated arrays
+  INTEGER :: rad_species_int
+  REAL(num), DIMENSION(:), ALLOCATABLE :: x_det_array, y_det_array, z_det_array
+  REAL(num), DIMENSION(:), ALLOCATABLE :: det_times
+  INTEGER :: nt_det
+  REAL(num), DIMENSION(:, :), ALLOCATABLE :: field_at_detector
+#endif
+  LOGICAL :: use_calc_radiation = .FALSE.
+
+
   !----------------------------------------------------------------------------
   ! MPI data
   !----------------------------------------------------------------------------
