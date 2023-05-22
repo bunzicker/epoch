@@ -118,9 +118,13 @@ MODULE calc_radiation
     END SUBROUTINE interp_field        
         
 
-    SUBROUTINE close_calc_radiation
+    SUBROUTINE deallocate_calc_radiation
         ! Deallocate all variables used by calc_radiation
-        RETURN
-    END SUBROUTINE close_calc_radiation
+        IF (use_calc_radiation) THEN
+            DEALLOCATE(x_det_array, y_det_array, z_det_array)
+            DEALLOCATE(det_times)
+            DEALLOCATE(field_at_detector)
+        END IF
+    END SUBROUTINE deallocate_calc_radiation
 #endif
 END MODULE calc_radiation
