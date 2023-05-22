@@ -27,6 +27,7 @@ MODULE finish
   USE ionise
   USE injectors
   USE probes
+  USE calc_radiation
 
   IMPLICIT NONE
 
@@ -129,6 +130,7 @@ CONTAINS
     CALL deallocate_partlists
     CALL deallocate_eval_stack
     CALL deallocate_injectors
+    CALL deallocate_calc_radiation
 
     CALL MPI_COMM_FREE(comm, errcode)
 
