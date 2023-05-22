@@ -139,7 +139,7 @@ CONTAINS
     CALL bremsstrahlung_deck_finalise
     CALL species_deck_finalise
     CALL calc_radiation_deck_finalise ! Must be called after
-			  ! species_deck_finalise
+			                                ! species_deck_finalise
     CALL part_from_file_deck_finalise ! Must be called after
                                       ! species_deck_finalise
     CALL window_deck_finalise
@@ -379,6 +379,9 @@ CONTAINS
       errcode_deck = IOR(errcode_deck, check_bremsstrahlung_variables())
 #endif
       errcode_deck = IOR(errcode_deck, bremsstrahlung_block_check())
+    END IF
+    IF (use_calc_radiation) THEN
+      errcode_deck = IOR(errcode_deck, calc_radiation_block_check())
     END IF
     errcode_deck = IOR(errcode_deck, constant_block_check())
     errcode_deck = IOR(errcode_deck, control_block_check())
