@@ -37,6 +37,9 @@ MODULE deck
 #ifdef BREMSSTRAHLUNG
   USE bremsstrahlung
 #endif
+#ifdef CALC_RADIATION
+  USE deck_calc_radiation_block
+#endif
   USE deck_qed_block
   USE deck_bremsstrahlung_block
   ! Initial Condition Blocks
@@ -103,6 +106,7 @@ CONTAINS
 #endif
     CALL qed_deck_initialise
     CALL bremsstrahlung_deck_initialise
+    CALL calc_radiation_deck_initialise
     CALL species_deck_initialise
     CALL window_deck_initialise
     CALL part_from_file_deck_initialise
@@ -134,6 +138,8 @@ CONTAINS
     CALL qed_deck_finalise
     CALL bremsstrahlung_deck_finalise
     CALL species_deck_finalise
+    CALL calc_radiation_deck_finalise ! Must be called after
+                                      ! species_deck_finalise
     CALL part_from_file_deck_finalise ! Must be called after
                                       ! species_deck_finalise
     CALL window_deck_finalise
@@ -180,6 +186,8 @@ CONTAINS
       CALL qed_block_start
     ELSE IF (str_cmp(block_name, 'bremsstrahlung')) THEN
       CALL bremsstrahlung_block_start
+    ELSE IF (str_cmp(block_name, 'calc_radiation')) THEN
+      CALL calc_radiation_block_start
     ELSE IF (str_cmp(block_name, 'species')) THEN
       CALL species_block_start
     ELSE IF (str_cmp(block_name, 'window')) THEN
@@ -231,6 +239,8 @@ CONTAINS
       CALL qed_block_end
     ELSE IF (str_cmp(block_name, 'bremsstrahlung')) THEN
       CALL bremsstrahlung_block_end
+    ELSE IF (str_cmp(block_name, 'calc_radiation')) THEN
+      CALL calc_radiation_block_end
     ELSE IF (str_cmp(block_name, 'species')) THEN
       CALL species_block_end
     ELSE IF (str_cmp(block_name, 'window')) THEN
@@ -316,6 +326,10 @@ CONTAINS
       RETURN
     ELSE IF (str_cmp(block_name, 'bremsstrahlung')) THEN
       handle_block = bremsstrahlung_block_handle_element(block_element, &
+          block_value)
+      RETURN
+    ELSE IF (str_cmp(block_name, 'calc_radiation')) THEN
+      handle_block = calc_radiation_block_handle_element(block_element, &
           block_value)
       RETURN
     ELSE IF (str_cmp(block_name, 'species')) THEN
