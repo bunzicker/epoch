@@ -282,7 +282,7 @@ CONTAINS
 
 #ifdef CALC_RADIATION
         ! Store current position and velocity for later
-        pos_prev = (/current%part_pos(1), 0.0_num, 0.0_num/)
+        pos_prev = (/current%part_pos, 0.0_num, 0.0_num/)
         beta_prev = (/part_ux, part_uy, part_uz/) / gamma_rel
 #endif
 
