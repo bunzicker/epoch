@@ -502,7 +502,7 @@ CONTAINS
         ! Calculate radiation at virtual detector
         pos = (/part_x + x_grid_min_local, &
             	part_y + y_grid_min_local, part_z + z_grid_min_local/)
-        beta = (/part_ux, part_uy, part_uz/) * igamma
+        beta = (/part_ux, part_uy, part_uz/) / gamma_rel
         beta_dot = (beta - beta_prev) / dt
 
         IF (time >= calc_radiation_start_time .AND. & 
