@@ -420,7 +420,7 @@ CONTAINS
 #ifdef CALC_RADIATION
         ! Calculate radiation at virtual detector
         pos = (/part_x + x_grid_min_local, 0.0_num, 0.0_num/)
-        beta = (/part_ux, part_uy, part_uz/) * igamma
+        beta = (/part_ux, part_uy, part_uz/) / gamma_rel
         beta_dot = (beta - beta_prev) / dt
 
         IF (time >= calc_radiation_start_time .AND. & 
