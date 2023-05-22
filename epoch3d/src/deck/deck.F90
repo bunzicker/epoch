@@ -380,6 +380,9 @@ CONTAINS
 #endif
       errcode_deck = IOR(errcode_deck, bremsstrahlung_block_check())
     END IF
+    IF (use_calc_radiation) THEN
+      errcode_deck = IOR(errcode_deck, calc_radiation_block_check())
+    END IF
     errcode_deck = IOR(errcode_deck, constant_block_check())
     errcode_deck = IOR(errcode_deck, control_block_check())
     errcode_deck = IOR(errcode_deck, dist_fn_block_check())
