@@ -232,7 +232,8 @@ CONTAINS
         (/'x_max', 'y_max', 'z_max', 'x_min', 'y_min', 'z_min'/)
     INTEGER, DIMENSION(6) :: fluxdir = &
         (/c_dir_x, c_dir_y, c_dir_z, -c_dir_x, -c_dir_y, -c_dir_z/)
-
+    REAL(num), DIMENSION(:, :), ALLOCATABLE :: field_at_detector_output
+    
     ! Clean-up any cached RNG state
     CALL random_flush_cache
 
