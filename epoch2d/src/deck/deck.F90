@@ -37,6 +37,7 @@ MODULE deck
 #ifdef BREMSSTRAHLUNG
   USE bremsstrahlung
 #endif
+  USE shared_data
 #ifdef CALC_RADIATION
   USE deck_calc_radiation_block
 #endif

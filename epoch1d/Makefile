@@ -474,8 +474,8 @@ deck.o: deck.F90 bremsstrahlung.o custom_deck.o deck_boundaries_block.o \
   deck_injector_block.o deck_io_block.o deck_io_global_block.o \
   deck_laser_block.o deck_part_from_file_block.o deck_particle_probe_block.o \
   deck_qed_block.o deck_species_block.o deck_stencil_block.o \
-  deck_subset_block.o deck_window_block.o photons.o strings.o utilities.o \
-  version_data.o $(SDFMOD)
+  deck_subset_block.o deck_window_block.o photons.o shared_data.o strings.o \
+  utilities.o version_data.o $(SDFMOD)
 deck_boundaries_block.o: deck_boundaries_block.f90 strings_advanced.o \
   utilities.o
 deck_bremsstrahlung_block.o: deck_bremsstrahlung_block.F90 strings_advanced.o \

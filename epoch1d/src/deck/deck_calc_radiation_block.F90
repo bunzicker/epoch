@@ -217,7 +217,7 @@ MODULE deck_calc_radiation_block
     END FUNCTION calc_radiation_block_handle_element
 
     FUNCTION calc_radiation_block_check() RESULT(errcode)
-
+        
         INTEGER :: errcode
 #ifdef CALC_RADIATION
         INTEGER :: io, iu
