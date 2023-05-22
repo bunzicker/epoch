@@ -225,7 +225,7 @@ MODULE deck_calc_radiation_block
         errcode = c_err_none
 
 #ifdef CALC_RADIATION
-    IF (radiation_species == '' .OR. radiation_species_int == -1) THEN
+    IF (radiation_species == '' .OR. rad_species_int == -1) THEN
       IF (rank == 0) THEN
         DO iu = 1, nio_units ! Print to stdout and to file
           io = io_units(iu)
