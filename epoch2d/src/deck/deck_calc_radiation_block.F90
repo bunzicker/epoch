@@ -236,7 +236,7 @@ MODULE deck_calc_radiation_block
           WRITE(io,*) 'Code will terminate.'
         END DO
       END IF
-      errcode = c_err_bad_value + c_err_terminate
+      errcode = c_err_missing_elements + c_err_terminate
     END IF
 #endif
 
