@@ -241,6 +241,11 @@ MODULE constants
       LOG(SQRT(epsilon0 * kb) / q0 * m0 * c * alpha / 1.4_num / h_bar)
 #endif
 
+  ! Constants used in calc_radiation
+#ifdef CALC_RADIATION
+  REAL(num), PARAMETER :: rad_field_coeff = q0 / (4.0_num * pi * epsilon0 * c)
+#endif
+
   ! define special particle IDs
   INTEGER, PARAMETER :: c_species_id_generic = 0
   INTEGER, PARAMETER :: c_species_id_photon = 1

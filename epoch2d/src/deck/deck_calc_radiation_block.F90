@@ -45,15 +45,24 @@ MODULE deck_calc_radiation_block
     
     END SUBROUTINE calc_radiation_deck_initialise
 
-    ! Write function to check for errors in initializing the calc_radiation block
+
     SUBROUTINE calc_radiation_deck_finalise
 
         REAL(num) :: spec_mc_sq
+        CHARACTER(LEN=8) :: string
 
         IF (deck_state == c_ds_first) RETURN
 
         IF (use_calc_radiation) THEN
             CALL get_radiation_species_int
+            IF (rad_species_int >= 1 .AND. rad_species_int <= n_species) THEN
+                IF (rank == 0) THEN
+                    CALL integer_as_string(rad_species_int, string)
+                    PRINT *, 'Using Species ', TRIM(ADJUSTL(string)), &
+                             ' (', TRIM(species_list(rad_species_int)%name) , &
+                             ') to calculate radiation.' 
+                END IF
+            END IF
 
             spec_mc_sq= species_list(rad_species_int)%mass * c**2
             calc_rad_gamma_min = (calc_rad_E_min*ev*1.0e-6_num)/spec_mc_sq + 1
@@ -122,7 +131,7 @@ MODULE deck_calc_radiation_block
         END IF
 
         IF (str_cmp(element, 'include_species')) THEN
-            radiation_species = TRIM(value)
+            radiation_species = TRIM(ADJUSTL(value))
             RETURN
         END IF
 

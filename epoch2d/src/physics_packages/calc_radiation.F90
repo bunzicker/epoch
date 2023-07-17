@@ -5,6 +5,7 @@ MODULE calc_radiation
     USE mpi
     USE sdf
     USE shared_data
+    USE constants
 
     CONTAINS
 
@@ -58,7 +59,8 @@ MODULE calc_radiation
         INTEGER :: ispecies
 
         DO ispecies = 1, n_species
-            IF (species_list(ispecies)%name == radiation_species) THEN
+            IF (TRIM(ADJUSTL(species_list(ispecies)%name)) ==  & 
+                                                    radiation_species) THEN
                 rad_species_int = ispecies
                 RETURN
             END IF
@@ -68,14 +70,10 @@ MODULE calc_radiation
             
     FUNCTION field(r_part, r_det, beta, beta_dot)
     ! Compute the electric field at r_det due to a particle at r_part.
-    
-        REAL(num) :: field_coeff
         REAL(num), DIMENSION(3), INTENT(IN) :: r_part, r_det, beta, beta_dot
         REAL(num), DIMENSION(3) :: R_vec, n_hat, numerator, field
         REAL(num) :: R_mag, denominator
-    
-        field_coeff = qe/(4*pi*epsilon0*c)
-    
+        
         ! Separation vector between particle and detector
         R_vec = r_det - r_part
         R_mag = SQRT(R_vec(1)**2 + R_vec(2)**2 + R_vec(3)**2)
@@ -83,8 +81,7 @@ MODULE calc_radiation
         
         numerator = cross(n_hat, cross(n_hat - beta, beta_dot))
         denominator = R_mag*(1 - dot_product(n_hat, beta))**3
-        field = field_coeff*numerator/denominator  
-        
+        field = rad_field_coeff*numerator/denominator  
     END FUNCTION field
         
     SUBROUTINE interp_field(t, t_prev, field)
