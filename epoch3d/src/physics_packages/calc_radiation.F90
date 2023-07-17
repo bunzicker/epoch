@@ -5,6 +5,7 @@ MODULE calc_radiation
     USE mpi
     USE sdf
     USE shared_data
+    USE constants
 
     CONTAINS
 
@@ -68,8 +69,6 @@ MODULE calc_radiation
             
     FUNCTION field(r_part, r_det, beta, beta_dot)
     ! Compute the electric field at r_det due to a particle at r_part.
-    
-        REAL(num) :: field_coeff
         REAL(num), DIMENSION(3), INTENT(IN) :: r_part, r_det, beta, beta_dot
         REAL(num), DIMENSION(3) :: R_vec, n_hat, numerator, field
         REAL(num) :: R_mag, denominator
@@ -83,7 +82,7 @@ MODULE calc_radiation
         
         numerator = cross(n_hat, cross(n_hat - beta, beta_dot))
         denominator = R_mag*(1 - dot_product(n_hat, beta))**3
-        field = field_coeff*numerator/denominator  
+        field = rad_field_coeff*numerator/denominator  
         
     END FUNCTION field
         

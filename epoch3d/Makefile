@@ -459,7 +459,7 @@ boundary.o: boundary.F90 injectors.o laser.o mpi_subtype_control.o \
 bremsstrahlung.o: bremsstrahlung.F90 bethe_heitler.o calc_df.o particles.o \
 	partlist.o setup.o
 calc_df.o: calc_df.F90 boundary.o
-calc_radiation.o : calc_radiation.F90 shared_data.o
+calc_radiation.o : calc_radiation.F90 constants.o shared_data.o
 collisions.o: collisions.F90 calc_df.o prefetch.o
 collision_ionise.o: collision_ionise.F90 calc_df.o collisions.o prefetch.o
 constants.o: constants.F90 $(SDFMOD)
