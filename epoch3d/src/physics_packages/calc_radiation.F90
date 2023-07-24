@@ -59,14 +59,15 @@ MODULE calc_radiation
         INTEGER :: ispecies
 
         DO ispecies = 1, n_species
-            IF (species_list(ispecies)%name == radiation_species) THEN
+            IF (TRIM(ADJUSTL(species_list(ispecies)%name)) ==  & 
+                                                    radiation_species) THEN
                 rad_species_int = ispecies
                 RETURN
             END IF
         END DO
         rad_species_int = -1
-    END SUBROUTINE get_radiation_species_int
-            
+    END SUBROUTINE get_radiation_species_int  
+              
     FUNCTION field(r_part, r_det, beta, beta_dot)
     ! Compute the electric field at r_det due to a particle at r_part.
         REAL(num), DIMENSION(3), INTENT(IN) :: r_part, r_det, beta, beta_dot

@@ -45,15 +45,23 @@ MODULE deck_calc_radiation_block
     
     END SUBROUTINE calc_radiation_deck_initialise
 
-    ! Write function to check for errors in initializing the calc_radiation block
     SUBROUTINE calc_radiation_deck_finalise
 
         REAL(num) :: spec_mc_sq
+        CHARACTER(LEN=8) :: string
 
         IF (deck_state == c_ds_first) RETURN
 
         IF (use_calc_radiation) THEN
             CALL get_radiation_species_int
+            IF (rad_species_int >= 1 .AND. rad_species_int <= n_species) THEN
+                IF (rank == 0) THEN
+                    CALL integer_as_string(rad_species_int, string)
+                    PRINT *, 'Using Species ', TRIM(ADJUSTL(string)), &
+                             ' (', TRIM(species_list(rad_species_int)%name) , &
+                             ') to calculate radiation.' 
+                END IF
+            END IF
 
             spec_mc_sq= species_list(rad_species_int)%mass * c**2
             calc_rad_gamma_min = (calc_rad_E_min*ev*1.0e-6_num)/spec_mc_sq + 1
@@ -93,7 +101,6 @@ MODULE deck_calc_radiation_block
         END IF
 
     END SUBROUTINE calc_radiation_deck_finalise
-
 
     SUBROUTINE calc_radiation_block_start
         use_calc_radiation = .TRUE.
@@ -224,22 +231,22 @@ MODULE deck_calc_radiation_block
 #endif
         errcode = c_err_none
 
-#ifdef CALC_RADIATION
-    IF (radiation_species == '' .OR. rad_species_int == -1) THEN
-      IF (rank == 0) THEN
-        DO iu = 1, nio_units ! Print to stdout and to file
-          io = io_units(iu)
-          WRITE(io,*)
-          WRITE(io,*) '*** ERROR ***'
-          WRITE(io,*) 'You must set a calc_radiation species.', &
-              'Please set calc_radiation species to a valid species.'
-          WRITE(io,*) 'Code will terminate.'
-        END DO
-      END IF
-      errcode = c_err_missing_elements + c_err_terminate
-    END IF
-#endif
-
+        IF (use_calc_radiation) THEN 
+            IF (radiation_species == '' .OR. rad_species_int == -1) THEN
+                IF (rank == 0) THEN
+                    DO iu = 1, nio_units ! Print to stdout and to file
+                        io = io_units(iu)
+                        WRITE(io,*)
+                        WRITE(io,*) '*** ERROR ***'
+                        WRITE(io,*) 'You must set a calc_radiation species.', &
+                            'Please set calc_radiation species to a valid species.'
+                        WRITE(io,*) 'Code will terminate.'
+                    END DO
+                END IF
+                errcode = c_err_bad_value + c_err_terminate
+            END IF
+        END IF
+    
     END FUNCTION calc_radiation_block_check
 
 
