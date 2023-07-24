@@ -228,26 +228,24 @@ MODULE deck_calc_radiation_block
     FUNCTION calc_radiation_block_check() RESULT(errcode)
 
         INTEGER :: errcode
-#ifdef CALC_RADIATION
         INTEGER :: io, iu
-#endif
         errcode = c_err_none
 
-#ifdef CALC_RADIATION
-    IF (radiation_species == '' .OR. rad_species_int == -1) THEN
-      IF (rank == 0) THEN
-        DO iu = 1, nio_units ! Print to stdout and to file
-          io = io_units(iu)
-          WRITE(io,*)
-          WRITE(io,*) '*** ERROR ***'
-          WRITE(io,*) 'You must set a calc_radiation species.', &
-              'Please set calc_radiation species to a valid species.'
-          WRITE(io,*) 'Code will terminate.'
-        END DO
-      END IF
-      errcode = c_err_bad_value + c_err_terminate
+    IF (use_calc_radiation) THEN 
+        IF (radiation_species == '' .OR. rad_species_int == -1) THEN
+            IF (rank == 0) THEN
+                DO iu = 1, nio_units ! Print to stdout and to file
+                    io = io_units(iu)
+                    WRITE(io,*)
+                    WRITE(io,*) '*** ERROR ***'
+                    WRITE(io,*) 'You must set a calc_radiation species.', &
+                        'Please set calc_radiation species to a valid species.'
+                    WRITE(io,*) 'Code will terminate.'
+                END DO
+            END IF
+            errcode = c_err_bad_value + c_err_terminate
+        END IF
     END IF
-#endif
 
     END FUNCTION calc_radiation_block_check
 
