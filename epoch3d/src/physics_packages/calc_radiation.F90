@@ -73,8 +73,6 @@ MODULE calc_radiation
         REAL(num), DIMENSION(3) :: R_vec, n_hat, numerator, field
         REAL(num) :: R_mag, denominator
     
-        field_coeff = qe/(4*pi*epsilon0*c)
-    
         ! Separation vector between particle and detector
         R_vec = r_det - r_part
         R_mag = SQRT(R_vec(1)**2 + R_vec(2)**2 + R_vec(3)**2)
