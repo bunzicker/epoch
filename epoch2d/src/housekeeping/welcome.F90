@@ -159,6 +159,9 @@ CONTAINS
 #ifdef NO_MPI3
     found = .TRUE.
 #endif
+#ifdef CALC_RADIATION
+    found = .TRUE.
+#endif
 
     IF (.NOT.found) THEN
       WRITE(*,*) '*************************************************************'
@@ -274,6 +277,10 @@ CONTAINS
     WRITE(*,*) 'Disable MPI3 features -DNO_MPI3'
 #else
     defines = IOR(defines, c_def_use_mpi3)
+#endif
+#ifdef CALC_RADIATION
+    defines = IOR(defines, c_def_calc_radiation)
+    WRITE(*, *) 'Calculate radiation field at virtual detector -DCALC_RADIATION'
 #endif
     WRITE(*,*) '*************************************************************'
 
