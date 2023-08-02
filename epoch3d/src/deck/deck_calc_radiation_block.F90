@@ -98,6 +98,12 @@ MODULE deck_calc_radiation_block
             nx_det = SIZE(x_det_array)
             ny_det = SIZE(y_det_array)
             nz_det = SIZE(z_det_array)
+
+            ! Copy data to field_at_detector_output for dumping
+            IF (rank == 0) THEN
+                ALLOCATE(field_at_detector_output(nt_det, 3))
+                field_at_detector_output(:, :) = 0.0_num
+            END IF
         END IF
 
     END SUBROUTINE calc_radiation_deck_finalise

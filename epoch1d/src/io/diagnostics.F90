@@ -914,16 +914,15 @@ CONTAINS
 
       IF (IAND(iomask(c_dump_field_at_detector), code) /= 0) THEN
         ! Dump field_at_detector            
-        ALLOCATE(field_at_detector_output(nt_det, 3))
-        field_at_detector_output(:, :) = 0.0_num
+        CALL MPI_REDUCE(field_at_detector, field_at_detector_output, &
+                  nt_det*3, mpi_real, MPI_SUM, 0, comm, errcode)
 
-        CALL MPI_ALLREDUCE(field_at_detector, field_at_detector_output, & 
-                nt_det*3, mpireal, MPI_SUM, comm, errcode)
+        IF (rank == 0) THEN
+          CALL sdf_write_srl(sdf_handle, 'field_at_detector', &
+              'Field_at_Detector', nt_det, 3, field_at_detector_output, 0)
 
-        CALL sdf_write_array(sdf_handle, 'field_at_detector', &
-           'Field_at_Detector', field_at_detector_output, & 
-           (/nt_det, 3/), (/1, 1/))   
-        DEALLOCATE(field_at_detector_output)      
+            field_at_detector_output(:, :) = 0.0_num
+        END IF
       END IF
 
 
