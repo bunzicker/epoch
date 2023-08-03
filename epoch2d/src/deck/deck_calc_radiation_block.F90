@@ -58,6 +58,7 @@ MODULE deck_calc_radiation_block
             IF (rad_species_int >= 1 .AND. rad_species_int <= n_species) THEN
                 IF (rank == 0) THEN
                     CALL integer_as_string(rad_species_int, string)
+                    PRINT *
                     PRINT *, 'Using Species ', TRIM(ADJUSTL(string)), &
                              ' (', TRIM(species_list(rad_species_int)%name) , &
                              ') to calculate radiation.' 
@@ -65,7 +66,12 @@ MODULE deck_calc_radiation_block
             END IF
 
             spec_mc_sq= species_list(rad_species_int)%mass * c**2
-            calc_rad_gamma_min = (calc_rad_E_min*ev*1.0e-6_num)/spec_mc_sq + 1
+            calc_rad_gamma_min = (calc_rad_E_min*ev*1.0e6_num)/spec_mc_sq + 1
+
+            IF (rank == 0) THEN
+                PRINT *, 'gamma_min for calc_radiation = ', calc_rad_gamma_min
+                PRINT *
+            END IF
 
             ! Generate arrays
             det_times = arange(t_det_min, t_det_max, dt_det)
