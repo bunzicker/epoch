@@ -66,7 +66,7 @@ CONTAINS
     INTEGER :: ix_det, iy_det, iz_det
     REAL(num) :: prefac, R_mag, R_mag_prev, t_det, t_det_prev
     REAL(num), DIMENSION(3) :: pos, pos_prev, beta, beta_prev, beta_dot
-    REAL(num), DIMENSION(3) :: pos_det, dr_det, field_at_part
+    REAL(num), DIMENSION(3) :: pos_det, field_at_part
 #endif
 
     ! Used for particle probes (to see of probe conditions are satisfied)
@@ -470,16 +470,13 @@ CONTAINS
                     ispecies == rad_species_int) THEN
           IF (gamma_rel >= calc_rad_gamma_min) THEN
             DO ix_det = 1, nx_det
-              ! Add random deviation from r_det to simulate finite pixel size
-              CALL RANDOM_NUMBER(dr_det)
-              dr_det = pixel_size*det_orientation*(-0.5_num + dr_det)
-              pos_det(1) = x_det_array(ix_det) + dr_det(1)
+              pos_det(1) = x_det_array(ix_det)
               
               DO iy_det = 1, ny_det
-                pos_det(2) = y_det_array(iy_det) + dr_det(2)
+                pos_det(2) = y_det_array(iy_det)
 
                 DO iz_det = 1, nz_det
-                  pos_det(3) = z_det_array(iz_det) + dr_det(3)
+                  pos_det(3) = z_det_array(iz_det)
                   
                   R_mag = SQRT( (pos(1) - pos_det(1))**2 +  & 
                                 (pos(2) - pos_det(2))**2 +  & 

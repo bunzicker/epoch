@@ -100,7 +100,7 @@ MODULE calc_radiation
         ! Interpolate field onto t_det_array
         DO WHILE (n_iter < n_slot)
             scale_fac = (det_times(n_iter + 2) - t_temp)/dt_det
-            field_at_detector(n_iter + 1, :) = &
+            field_at_detector(n_iter + 1, :) = + &
                             field_at_detector(n_iter + 1, :) + scale_fac*field
             n_iter = n_iter + 1
             t_temp = det_times(n_iter + 1)

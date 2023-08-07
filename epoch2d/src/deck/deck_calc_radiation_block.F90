@@ -33,8 +33,6 @@ MODULE deck_calc_radiation_block
             ny_det = 1
             nz_det = 1
             detector_pos = 1.0_num
-            pixel_size = 0.0_num
-            det_orientation = (/0.0_num, 0.0_num, 0.0_num/)
         
             t_det_min = 0.0_num
             t_det_max = 1.0_num
@@ -87,25 +85,21 @@ MODULE deck_calc_radiation_block
                 x_det_array = (/detector_pos/)
                 y_det_array = linspace(y_det_min, y_det_max, ny_det)
                 z_det_array = linspace(z_det_min, z_det_max, nz_det)
-                det_orientation = (/0.0_num, 1.0_num, 1.0_num/)
             ELSE IF (detector_type == 'plane_y') THEN
                 ALLOCATE(x_det_array(nx_det), y_det_array(1), z_det_array(nz_det))
                 x_det_array = linspace(x_det_min, x_det_max, nx_det)
                 y_det_array = (/detector_pos/)
                 z_det_array = linspace(z_det_min, z_det_max, nz_det)
-                det_orientation = (/1.0_num, 0.0_num, 1.0_num/)
             ELSE IF (detector_type == 'plane_z') THEN
                 ALLOCATE(x_det_array(nx_det), y_det_array(ny_det), z_det_array(1))
                 x_det_array = linspace(x_det_min, x_det_max, nx_det)
                 y_det_array = linspace(y_det_min, y_det_max, ny_det)
                 z_det_array = (/detector_pos/)
-                det_orientation = (/1.0_num, 1.0_num, 0.0_num/)
             ELSE
                 ALLOCATE(x_det_array(1), y_det_array(1), z_det_array(1))
                 x_det_array = (/x_det_min/)
                 y_det_array = (/y_det_min/)
                 z_det_array = (/z_det_min/)
-                det_orientation = (/1.0_num, 1.0_num, 1.0_num/)
             END IF
 
             nx_det = SIZE(x_det_array)
@@ -235,11 +229,6 @@ MODULE deck_calc_radiation_block
         IF (str_cmp(element, 'calc_radiation_energy_min') & 
                 .OR. str_cmp(element, 'E_min')) THEN
             calc_rad_E_min = as_real_print(value, element, errcode)
-            RETURN
-        END IF
-
-        IF (str_cmp(element, 'pixel_size')) THEN
-            pixel_size = as_real_print(value, element, errcode)
             RETURN
         END IF
 

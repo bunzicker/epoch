@@ -674,8 +674,7 @@ MODULE shared_data
   CHARACTER(LEN=string_length) :: detector_type
   INTEGER :: nx_det, ny_det, nz_det
   REAL(num) :: x_det_min, x_det_max, y_det_min, y_det_max, z_det_min, z_det_max
-  REAL(num) :: detector_pos, pixel_size
-  REAL(num), DIMENSION(3) :: det_orientation
+  REAL(num) :: detector_pos
   REAL(num) :: t_det_min, t_det_max
   REAL(num) :: dt_det
   REAL(num) :: calc_rad_gamma_min, calc_rad_E_min
