@@ -980,7 +980,7 @@ CONTAINS
       IF (IAND(iomask(c_dump_field_at_detector), code) /= 0) THEN
         ! Dump field_at_detector            
         CALL MPI_REDUCE(field_at_detector, field_at_detector_output, &
-                  nt_det*3, mpi_real, MPI_SUM, 0, comm, errcode)
+                  nt_det*3, mpireal, MPI_SUM, 0, comm, errcode)
                   
         IF (rank == 0) THEN
           CALL sdf_write_srl(sdf_handle, 'field_at_detector', &
