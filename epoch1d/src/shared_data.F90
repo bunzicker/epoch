@@ -661,8 +661,8 @@ MODULE shared_data
   REAL(num), DIMENSION(:), ALLOCATABLE :: x_det_array, y_det_array, z_det_array
   REAL(num), DIMENSION(:), ALLOCATABLE :: det_times
   INTEGER :: nt_det
-  REAL(num), DIMENSION(:, :), ALLOCATABLE :: field_at_detector
-  REAL(num), DIMENSION(:, :), ALLOCATABLE :: field_at_detector_output
+  REAL(num), DIMENSION(:,:,:,:,:), ALLOCATABLE :: field_at_detector
+  REAL(num), DIMENSION(:,:,:,:,:), ALLOCATABLE :: field_at_detector_output
 #endif
   LOGICAL :: use_calc_radiation = .FALSE.
 

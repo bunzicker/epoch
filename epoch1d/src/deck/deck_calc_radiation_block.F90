@@ -75,7 +75,7 @@ MODULE deck_calc_radiation_block
             ! Generate arrays
             det_times = arange(t_det_min, t_det_max, dt_det)
             nt_det = SIZE(det_times)
-            ALLOCATE(field_at_detector(nt_det, 3))
+            ALLOCATE(field_at_detector(nt_det, nx_det, ny_det, nz_det, 3))
             field_at_detector = 0.0_num
 
             ! Detector location
@@ -107,8 +107,8 @@ MODULE deck_calc_radiation_block
 
             ! Copy data to field_at_detector_output for dumping
             IF (rank == 0) THEN
-                ALLOCATE(field_at_detector_output(nt_det, 3))
-                field_at_detector_output(:, :) = 0.0_num
+                ALLOCATE(field_at_detector_output(nt_det,nx_det,ny_det,nz_det,3))
+                field_at_detector_output = 0.0_num
             END IF
         END IF
 

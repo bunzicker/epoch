@@ -967,26 +967,29 @@ CONTAINS
 
       ! Dump information related to calc_radiation
       IF (IAND(iomask(c_dump_virtual_det_grid), code) /= 0) THEN
-        CALL sdf_write_srl_plain_mesh(sdf_handle, 'detector_grid', &
-          'Virtual_Detector_Grid', &
-          x_det_array, y_det_array, z_det_array, convert)
+        CALL sdf_write_srl(sdf_handle, 'detector_grid_x', &
+          'Virtual_Detector_Grid_X', x_det_array, 0)
+        CALL sdf_write_srl(sdf_handle, 'detector_grid_y', &
+          'Virtual_Detector_Grid_Y', y_det_array, 0)
+        CALL sdf_write_srl(sdf_handle, 'detector_grid_z', &
+          'Virtual_Detector_Grid_Z', z_det_array, 0)
       END IF
 
       IF (IAND(iomask(c_dump_virtual_det_times), code) /= 0) THEN
-        CALL sdf_write_srl_plain_mesh(sdf_handle, 'detector_times', &
-          'Virtual_Detector_Times', det_times, convert)
+        CALL sdf_write_srl(sdf_handle, 'detector_times', &
+          'Virtual_Detector_Times', det_times, 0)
       END IF
 
       IF (IAND(iomask(c_dump_field_at_detector), code) /= 0) THEN
         ! Dump field_at_detector            
         CALL MPI_REDUCE(field_at_detector, field_at_detector_output, &
-                  nt_det*3, mpireal, MPI_SUM, 0, comm, errcode)
-                  
+              nt_det*nx_det*ny_det*nz_det*3, mpireal, MPI_SUM, 0, &
+              comm, errcode)                  
         IF (rank == 0) THEN
           CALL sdf_write_srl(sdf_handle, 'field_at_detector', &
-              'Field_at_Detector', nt_det, 3, field_at_detector_output, 0)
+              'Field_at_Detector', field_at_detector_output, 0)
 
-            field_at_detector_output(:, :) = 0.0_num
+            field_at_detector_output(:,:,:,:,:) = 0.0_num
         END IF 
       END IF
 
