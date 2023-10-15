@@ -488,8 +488,9 @@ CONTAINS
                   t_det_prev = R_mag_prev/c + time - dt
 
                   IF (t_det_prev > t_det_min .AND. t_det < t_det_max) THEN
-                    field_at_part = field(pos, pos_det, beta, beta_dot) * part_weight
-                    CALL interp_field(t_det, t_det_prev, field_at_part)
+                    field_at_part = field(pos,pos_det,beta,beta_dot)*part_weight
+                    CALL interp_field(t_det, t_det_prev, field_at_part, &
+                                        ix_det, iy_det, iz_det)
                   END IF
 
                 END DO
