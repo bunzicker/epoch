@@ -23,16 +23,10 @@ MODULE deck_calc_radiation_block
             calc_radiation_start_time = 0.0_num
         
             detector_type = 'point'
-            x_det_min = 1.0_num
-            x_det_max = 0.0_num
-            y_det_min = 0.0_num
-            y_det_max = 0.0_num
-            z_det_min = 0.0_num
-            z_det_max = 0.0_num
-            nx_det = 1
-            ny_det = 1
-            nz_det = 1
-            detector_pos = 1.0_num
+            n_det_hor = 1
+            n_det_ver = 1
+            det_center = (/0.0_num, 0.0_num, 0.0_num/)
+            det_angle = 0.0_num
         
             t_det_min = 0.0_num
             t_det_max = 1.0_num
@@ -49,6 +43,7 @@ MODULE deck_calc_radiation_block
 
         REAL(num) :: spec_mc_sq
         CHARACTER(LEN=8) :: string
+        INTEGER :: arr_con
 
         IF (deck_state == c_ds_first) RETURN
 
@@ -75,39 +70,37 @@ MODULE deck_calc_radiation_block
             ! Generate arrays
             det_times = arange(t_det_min, t_det_max, dt_det)
             nt_det = SIZE(det_times)
-            ALLOCATE(field_at_detector(nt_det, nx_det, ny_det, nz_det, 3))
+            ALLOCATE(field_at_detector(nt_det, n_det_hor, n_det_ver, 3))
             field_at_detector = 0.0_num
 
             ! Detector location
-            IF (detector_type == 'plane_x') THEN
-                ALLOCATE(x_det_array(1), y_det_array(ny_det), z_det_array(nz_det))
-                x_det_array = (/detector_pos/)
-                y_det_array = linspace(y_det_min, y_det_max, ny_det)
-                z_det_array = linspace(z_det_min, z_det_max, nz_det)
-            ELSE IF (detector_type == 'plane_y') THEN
-                ALLOCATE(x_det_array(nx_det), y_det_array(1), z_det_array(nz_det))
-                x_det_array = linspace(x_det_min, x_det_max, nx_det)
-                y_det_array = (/detector_pos/)
-                z_det_array = linspace(z_det_min, z_det_max, nz_det)
-            ELSE IF (detector_type == 'plane_z') THEN
-                ALLOCATE(x_det_array(nx_det), y_det_array(ny_det), z_det_array(1))
-                x_det_array = linspace(x_det_min, x_det_max, nx_det)
-                y_det_array = linspace(y_det_min, y_det_max, ny_det)
-                z_det_array = (/detector_pos/)
-            ELSE
-                ALLOCATE(x_det_array(1), y_det_array(1), z_det_array(1))
-                x_det_array = (/x_det_min/)
-                y_det_array = (/y_det_min/)
-                z_det_array = (/z_det_min/)
+            IF (detector_type == 'plane') THEN
+                ALLOCATE(det_dir1(n_det_hor), det_dir2(n_det_hor), &
+                            det_dir3(n_det_ver))
+                ! det_dir1 and det_dir2 lie in the xy plane. 
+                ! det_dir3 is in the z_hat direction.
+                det_dir1 = linspace(-det_width/2.0_num, & 
+                                det_width/2.0_num, n_det_hor) + det_center(1)
+                det_dir2 = (/(det_center(2), arr_con = 1, n_det_hor)/)
+                det_dir3 = linspace(-det_height/2.0_num, & 
+                                det_height/2.0_num, n_det_ver) + det_center(3)
+            ELSE ! use point by default
+                ALLOCATE(det_dir1(1), det_dir2(1), det_dir3(1))
+                det_dir1 = (/det_center(1)/)
+                det_dir2 = (/det_center(2)/)
+                det_dir3 = (/det_center(3)/)
             END IF
 
-            nx_det = SIZE(x_det_array)
-            ny_det = SIZE(y_det_array)
-            nz_det = SIZE(z_det_array)
+            n_det_hor = SIZE(det_dir1)
+            n_det_ver = SIZE(det_dir3)
+
+            ! Convert det_angle to radians
+            det_angle = det_angle*pi/180.0_num
 
             ! Copy data to field_at_detector_output for dumping
             IF (rank == 0) THEN
-                ALLOCATE(field_at_detector_output(nt_det,nx_det,ny_det,nz_det,3))
+                ALLOCATE(field_at_detector_output(nt_det, n_det_hor, &
+                            n_det_ver, 3))
                 field_at_detector_output = 0.0_num
             END IF
         END IF
@@ -158,55 +151,33 @@ MODULE deck_calc_radiation_block
             RETURN
         END IF 
 
-        IF(str_cmp(element, 'x_det_pos') & 
-                .OR. str_cmp(element, 'y_det_pos') &
-                .OR. str_cmp(element, 'z_det_pos')) THEN
-            detector_pos = as_real_print(value, element, errcode)
+        IF (str_cmp(element, 'det_center')) THEN
+            CALL get_vector(value, det_center, errcode)
+            RETURN
+          END IF
+      
+        IF (str_cmp(element, 'det_width')) THEN
+            det_width = as_real_print(value, element, errcode)
             RETURN
         END IF
 
-        IF (str_cmp(element, 'x_det_min')) THEN
-            x_det_min = as_real_print(value, element, errcode)
+        IF (str_cmp(element, 'det_height')) THEN
+            det_height = as_real_print(value, element, errcode)
             RETURN
         END IF
 
-        IF (str_cmp(element, 'x_det_max')) THEN
-            x_det_max = as_real_print(value, element, errcode)
+        IF (str_cmp(element, 'n_pixels_hor')) THEN
+            n_det_hor = as_integer_print(value, element, errcode)
             RETURN
         END IF
 
-        IF (str_cmp(element, 'y_det_min')) THEN
-            y_det_min = as_real_print(value, element, errcode)
+        IF (str_cmp(element, 'n_pixels_ver')) THEN
+            n_det_ver = as_integer_print(value, element, errcode)
             RETURN
         END IF
 
-        IF (str_cmp(element, 'y_det_max')) THEN
-            y_det_max = as_real_print(value, element, errcode)
-            RETURN
-        END IF
-
-        IF (str_cmp(element, 'z_det_min')) THEN
-            z_det_min = as_real_print(value, element, errcode)
-            RETURN
-        END IF
-
-        IF (str_cmp(element, 'z_det_max')) THEN
-            z_det_max = as_real_print(value, element, errcode)
-            RETURN
-        END IF
-
-        IF (str_cmp(element, 'nx_det')) THEN
-            nx_det = as_integer_print(value, element, errcode)
-            RETURN
-        END IF
-
-        IF (str_cmp(element, 'ny_det')) THEN
-            ny_det = as_integer_print(value, element, errcode)
-            RETURN
-        END IF
-
-        IF (str_cmp(element, 'nz_det')) THEN
-            nz_det = as_integer_print(value, element, errcode)
+        IF (str_cmp(element, 'det_angle')) THEN
+            det_angle = as_real_print(value, element, errcode)
             RETURN
         END IF
 

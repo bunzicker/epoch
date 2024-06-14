@@ -902,11 +902,11 @@ CONTAINS
       ! Dump information related to calc_radiation
       IF (IAND(iomask(c_dump_virtual_det_grid), code) /= 0) THEN
         CALL sdf_write_srl(sdf_handle, 'detector_grid_x', &
-          'Virtual_Detector_Grid_X', x_det_array, 0)
+          'Virtual_Detector_Grid_X', det_dir1, 0)
         CALL sdf_write_srl(sdf_handle, 'detector_grid_y', &
-          'Virtual_Detector_Grid_Y', y_det_array, 0)
+          'Virtual_Detector_Grid_Y', det_dir2, 0)
         CALL sdf_write_srl(sdf_handle, 'detector_grid_z', &
-          'Virtual_Detector_Grid_Z', z_det_array, 0)
+          'Virtual_Detector_Grid_Z', det_dir3, 0)
       END IF
 
       IF (IAND(iomask(c_dump_virtual_det_times), code) /= 0) THEN
@@ -915,16 +915,15 @@ CONTAINS
       END IF
 
       IF (IAND(iomask(c_dump_field_at_detector), code) /= 0) THEN
-        ! Dump field_at_detector            
+        ! Dump field_at_detector  
         CALL MPI_REDUCE(field_at_detector, field_at_detector_output, &
-              nt_det*nx_det*ny_det*nz_det*3, mpireal, MPI_SUM, 0, &
+              nt_det*n_det_hor*n_det_ver*3, mpireal, MPI_SUM, 0, &
               comm, errcode)
 
-        IF (rank == 0) THEN
+        IF (rank == 0) THEN  
           CALL sdf_write_srl(sdf_handle, 'field_at_detector', &
               'Field_at_Detector', field_at_detector_output, 0)
-
-            field_at_detector_output(:,:,:,:,:) = 0.0_num
+          field_at_detector_output(:,:,:,:) = 0.0_num
         END IF
       END IF
 

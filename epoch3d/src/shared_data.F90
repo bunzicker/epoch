@@ -694,20 +694,19 @@ MODULE shared_data
   CHARACTER(LEN=string_length) :: radiation_species
   REAL(num) :: calc_radiation_start_time
   CHARACTER(LEN=string_length) :: detector_type
-  INTEGER :: nx_det, ny_det, nz_det
-  REAL(num) :: x_det_min, x_det_max, y_det_min, y_det_max, z_det_min, z_det_max
-  REAL(num) :: detector_pos
-  REAL(num) :: t_det_min, t_det_max
-  REAL(num) :: dt_det
+  INTEGER :: n_det_hor, n_det_ver
+  REAL(num), DIMENSION(3) :: det_center
+  REAL(num) :: det_width, det_height, det_angle
+  REAL(num) :: t_det_min, t_det_max, dt_det
   REAL(num) :: calc_rad_gamma_min, calc_rad_E_min
 
   ! Generated arrays
   INTEGER :: rad_species_int
-  REAL(num), DIMENSION(:), ALLOCATABLE :: x_det_array, y_det_array, z_det_array
+  REAL(num), DIMENSION(:), ALLOCATABLE :: det_dir1, det_dir2, det_dir3
   REAL(num), DIMENSION(:), ALLOCATABLE :: det_times
   INTEGER :: nt_det
-  REAL(num), DIMENSION(:,:,:,:,:), ALLOCATABLE :: field_at_detector
-  REAL(num), DIMENSION(:,:,:,:,:), ALLOCATABLE :: field_at_detector_output
+  REAL(num), DIMENSION(:,:,:,:), ALLOCATABLE :: field_at_detector
+  REAL(num), DIMENSION(:,:,:,:), ALLOCATABLE :: field_at_detector_output
 #endif
   LOGICAL :: use_calc_radiation = .FALSE.
 

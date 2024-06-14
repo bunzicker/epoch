@@ -85,11 +85,11 @@ MODULE calc_radiation
         
     END FUNCTION field
         
-    SUBROUTINE interp_field(t, t_prev, field, ix_det, iy_det, iz_det)
+    SUBROUTINE interp_field(t, t_prev, field, i_det_hor, i_det_ver)
     ! Interpolate field onto t_det_array 
         REAL(num), INTENT(IN) :: t, t_prev
         REAL(num), DIMENSION(3), INTENT(IN) :: field
-        INTEGER, INTENT(IN) :: ix_det, iy_det, iz_det
+        INTEGER, INTENT(IN) :: i_det_hor, i_det_ver
         INTEGER :: n_slot, n_slot_prev, n_iter
         REAL(num) :: scale_fac, t_temp
                     
@@ -102,8 +102,8 @@ MODULE calc_radiation
         ! Interpolate field onto t_det_array
         DO WHILE (n_iter < n_slot)
             scale_fac = (det_times(n_iter + 2) - t_temp)/dt_det
-            field_at_detector(n_iter + 1, ix_det, iy_det, iz_det, :) = + &
-                    field_at_detector(n_iter + 1, ix_det, iy_det, iz_det, :) + &
+            field_at_detector(n_iter + 1, i_det_hor, i_det_ver, :) = + &
+                    field_at_detector(n_iter + 1, i_det_hor, i_det_ver, :) + &
                     scale_fac*field
             n_iter = n_iter + 1
             t_temp = det_times(n_iter + 1)
@@ -111,8 +111,8 @@ MODULE calc_radiation
         
         ! Use a different scale to prevent double counting
         scale_fac = (t - det_times(n_slot + 1))/dt_det
-        field_at_detector(n_slot + 1, ix_det, iy_det, iz_det, :) = &
-                    field_at_detector(n_slot + 1, ix_det, iy_det, iz_det, :) + &
+        field_at_detector(n_slot + 1, i_det_hor, i_det_ver, :) = &
+                    field_at_detector(n_slot + 1, i_det_hor, i_det_ver, :) + &
                     scale_fac*field
     END SUBROUTINE interp_field        
         
@@ -120,7 +120,7 @@ MODULE calc_radiation
     SUBROUTINE deallocate_calc_radiation
         ! Deallocate all variables used by calc_radiation
         IF (use_calc_radiation) THEN
-            DEALLOCATE(x_det_array, y_det_array, z_det_array)
+            DEALLOCATE(det_dir1, det_dir2, det_dir3)
             DEALLOCATE(det_times)
             DEALLOCATE(field_at_detector)
         END IF
